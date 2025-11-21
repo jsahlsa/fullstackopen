@@ -14,6 +14,13 @@ const Statistics = ({ good, neutral, bad }) => {
     const positive = ((goodScore / all) * 100).toFixed(3)
 
     console.log(all, goodScore, badScore, avg, positive)
+    if (all === 0) {
+        return (
+            <div>
+                <p>No feedback given</p>
+            </div>
+        )
+    }
     return (
         <div>
             <p>good {good}</p>
