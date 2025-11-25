@@ -18,6 +18,7 @@ const App = () => {
     }
     const [vote, setVotes] = useState(votes)
     const [selected, setSelected] = useState(0)
+    const [mostVotes, setMostVotes] = useState(0)
 
     const handleAnecdote = () => {
         const random =  Math.floor(Math.random() * anecdotes.length)
@@ -28,6 +29,16 @@ const App = () => {
         const votesCopy = {...vote}
         votesCopy[selected] += 1
         setVotes(() => votesCopy)
+        let most = 0
+        let updatedMost = 0
+        for (let i = 0; i < anecdotes.length; i++) {
+            if (votesCopy[i] > most) {
+                most = votesCopy[i]
+                updatedMost = i
+                console.log('most', most, 'vote', vote[i])
+            }
+        }
+        setMostVotes(updatedMost)
     }
     console.log('votes', vote, 'selected', selected)
 
@@ -37,6 +48,8 @@ const App = () => {
             <p>has {vote[selected]} votes</p>
             <button onClick={handleAnecdote}>next anecdote</button>
             <button onClick={handleVote}>vote</button>
+            <h1>Anecdote with most votes</h1>
+            <p>{anecdotes[mostVotes]}</p>
         </>
     )
 }
