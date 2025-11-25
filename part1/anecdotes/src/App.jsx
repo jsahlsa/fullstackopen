@@ -34,8 +34,8 @@ const App = () => {
     return (
         <>
             <p>{anecdotes[selected]}</p>
-            <button onClick={handleAnecdote}>next anecdote</button>
             <p>has {vote[selected]} votes</p>
+            <button onClick={handleAnecdote}>next anecdote</button>
             <button onClick={handleVote}>vote</button>
         </>
     )
