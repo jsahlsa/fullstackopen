@@ -12,18 +12,31 @@ const App = () => {
         'The only way to go fast, is to go well.'
     ]
 
+    const votes = {}
+    for (let i = 0; i < anecdotes.length; i++) {
+        votes[i] = 0
+    }
+    const [vote, setVotes] = useState(votes)
     const [selected, setSelected] = useState(0)
 
     const handleAnecdote = () => {
-        const random = Math.floor(Math.random() * anecdotes.length)
-        console.log(random)
-        setSelected(random)
+        const random =  Math.floor(Math.random() * anecdotes.length)
+        setSelected(() => random)
     }
+
+    const handleVote = () => {
+        const votesCopy = {...vote}
+        votesCopy[selected] += 1
+        setVotes(() => votesCopy)
+    }
+    console.log('votes', vote, 'selected', selected)
 
     return (
         <>
             <p>{anecdotes[selected]}</p>
             <button onClick={handleAnecdote}>next anecdote</button>
+            <p>has {vote[selected]} votes</p>
+            <button onClick={handleVote}>vote</button>
         </>
     )
 }
