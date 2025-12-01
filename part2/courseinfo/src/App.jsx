@@ -45,6 +45,7 @@ const Course = (props) => {
         <>
             <Header course={props.course} />
             <Content course={props.course} />
+            <Total course={props.course} />
         </>
     )
 }
