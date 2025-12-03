@@ -1,12 +1,20 @@
-const Persons = ({ filter, filteredPersons, persons }) => {
+import Person from './Person'
+
+const Persons = ({ filter, filteredPersons, persons, handleDelete }) => {
+
+    const personsArray = filter.length > 0 ? filteredPersons : persons
+
     return (
-        <>
+        <ul>
             {
-                filter.length > 0 ?
-                    filteredPersons.map(person => <p key={person.name}>{person.name} {person.number}</p>) :
-                    persons.map(person => <p key={person.name}>{person.name} {person.number}</p>)
+                personsArray.map(person => <Person
+                    key={person.name}
+                    name={person.name}
+                    number={person.number}
+                    handleDelete={() => handleDelete(person.id, person.name)}
+                />)
             }
-        </>
+        </ul>
     )
 }
 

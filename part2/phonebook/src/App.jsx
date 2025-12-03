@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personsServices from './services/persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
@@ -12,20 +12,18 @@ function App() {
     const [filteredPersons, setFilteredPersons] = useState(persons)
 
     useEffect(() => {
-        axios
-            .get('http://localhost:3001/persons')
+        personsServices
+            .getAll()
             .then(response => {
                 setPersons(response.data)
             })
     }, [])
 
     const handleNameChange = (e) => {
-        console.log(e.target.value)
         setNewName(e.target.value)
     }
 
     const handleNumberChange = (e) => {
-        console.log(e.target.value)
         setNewNumber(e.target.value)
     }
 
@@ -44,9 +42,24 @@ function App() {
         if (exists) {
             alert(`${newName} is already added to the phonebook`)
         } else {
-            setPersons(persons.concat(newPerson))
-            setNewName('')
-            setNewNumber('')
+            personsServices
+                .create(newPerson)
+                .then(response => {
+                    setPersons(persons.concat(response.data))
+                    setNewName('')
+                    setNewNumber('')
+                })
+        }
+    }
+
+    const handleDelete = (id, name) => {
+        if (window.confirm(`Are you sure you want to delete ${name}`)) {
+            personsServices
+                .deletePerson(id)
+                .then(response => {
+                    console.log(response.data, 'delete respose data')
+                    setPersons(persons.filter(person => person.id !== id))
+                })
         }
     }
 
@@ -63,7 +76,7 @@ function App() {
                 newNumber={newNumber}
             />
             <h2>Numbers</h2>
-            {persons && <Persons filter={filter} filteredPersons={filteredPersons} persons={persons} />}
+            {persons && <Persons filter={filter} filteredPersons={filteredPersons} persons={persons} handleDelete={handleDelete} />}
         </>
     )
 }
