@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import personsServices from './services/persons'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 
@@ -10,6 +11,8 @@ function App() {
     const [newNumber, setNewNumber] = useState('')
     const [filter, setFilter] = useState('')
     const [filteredPersons, setFilteredPersons] = useState(persons)
+    const [success, setSuccess] = useState(null)
+    const [messageType, setMessageType] = useState('')
 
     useEffect(() => {
         personsServices
@@ -39,24 +42,44 @@ function App() {
         e.preventDefault()
         const newPerson = { name: newName, number: newNumber }
         const exists = persons.some(person => person.name === newName)
-        const existingPerson = persons.filter(person => person.name === newName)
-        const existingId = existingPerson[0].id
         if (exists) {
+            const existingPerson = persons.filter(person => person.name === newName)
+            const existingId = existingPerson[0].id
             if (window.confirm(`${newName} is already added to the phonebook, replace the old number with the new one?`)) {
                 // add put service
                 personsServices
                     .update(existingId, newPerson)
                     .then(response => {
+                        setMessageType('success')
                         setPersons(persons.map(person => person.id === existingId ? response.data : person))
+                        setNewName('')
+                        setNewNumber('')
+                        setSuccess(`${newName}'s number was successfully changed!`)
+                        setTimeout(() => {
+                            setSuccess(null)
+                        }, 3000)
+                    })
+                    .catch(err => {
+                        console.error(`An error occurred: ${err}`)
+                        setSuccess(`${newName} has been romoved from the server`)
+                        setMessageType('error')
                     })
             }
         } else {
             personsServices
                 .create(newPerson)
                 .then(response => {
+                    setMessageType('success')
                     setPersons(persons.concat(response.data))
                     setNewName('')
                     setNewNumber('')
+                    setSuccess(`${newName} was sucessfully added!`)
+                    setTimeout(() => {
+                        setSuccess(null)
+                    }, 3000)
+                })
+                .catch(err => {
+                    console.error(`An error occurred: ${err}`)
                 })
         }
     }
@@ -75,6 +98,7 @@ function App() {
     return (
         <>
             <h2>Phonebook</h2>
+            <Notification message={success} type={messageType} />
             <Filter onChange={handleFilter} value={filter} />
             <h2>add a new</h2>
             <PersonForm

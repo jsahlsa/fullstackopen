@@ -1,0 +1,21 @@
+h2 {
+    color: green;
+}
+
+.success {
+    background: lightgreen;
+    padding: 0.5rem;
+    text-transform: uppercase;
+    outline: 1px green solid;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(2px 2px 4px gray);
+}
+
+.error {
+    background: tomato;
+    padding: 0.5rem;
+    text-transform: uppercase;
+    outline: 1px red solid;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(2px 2px 4px gray);
+}
