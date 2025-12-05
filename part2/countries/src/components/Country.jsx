@@ -1,6 +1,8 @@
 const Country = ({ countries }) => {
 
+    console.log('country in countries', countries)
     const country = countries && countries[0]
+    console.log(country)
     const languages = Object.values(country.languages)
 
     return (

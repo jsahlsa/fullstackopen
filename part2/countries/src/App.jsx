@@ -25,11 +25,22 @@ function App() {
                     })
                     setLoading(false)
                     setCountries(filtered)
+                    console.log('value', value)
                 })
         }
     }, [value])
 
-    console.log(countries)
+    const handleGetOne = (name) => {
+        setLoading(true)
+        axios
+            .get(`https://studies.cs.helsinki.fi/restcountries/api/name/${name}`)
+            .then(response => {
+                setLoading(false)
+                console.log(response.data)
+                setCountries([response.data])
+            })
+    }
+
     const handleChange = (e) => {
         setValue(e.target.value)
     }
@@ -55,7 +66,7 @@ function App() {
     return (
         <>
             find countries <input onChange={handleChange} value={value} />
-            { countries && countries.length > 1 ?  <Countries countries={countries} /> : <Country countries={countries} /> }
+            { countries && countries.length > 1 ?  <Countries countries={countries} handleGetOne={handleGetOne}  /> : <Country countries={countries} /> }
         </>
     )
 }

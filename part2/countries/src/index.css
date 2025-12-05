@@ -1,3 +1,11 @@
 img {
     width: 400px;
 }
+
+.list-item {
+    display: flex;
+}
+
+button {
+    margin-left: 10px;
+}
