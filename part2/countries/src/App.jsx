@@ -25,7 +25,6 @@ function App() {
                     })
                     setLoading(false)
                     setCountries(filtered)
-                    console.log('value', value)
                 })
         }
     }, [value])
@@ -36,7 +35,6 @@ function App() {
             .get(`https://studies.cs.helsinki.fi/restcountries/api/name/${name}`)
             .then(response => {
                 setLoading(false)
-                console.log(response.data)
                 setCountries([response.data])
             })
     }

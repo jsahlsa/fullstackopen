@@ -9,3 +9,7 @@ img {
 button {
     margin-left: 10px;
 }
+
+.weather-icon {
+    width: 100px;
+}
