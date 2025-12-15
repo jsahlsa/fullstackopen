@@ -1,5 +1,8 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
+const Person = require('./models/person')
+const person = require('./models/person')
 const app = express()
 
 morgan.token('body', (req, res) => {
@@ -33,46 +36,46 @@ let persons = [{
 ]
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+    Person.find({}).then(persons => {
+        response.json(persons)
+    })
 })
 
 app.get('/info', (request, response) => {
-    const length = persons.length
-    const date = new Date()
-    response.send(`<p>
-        Phonebook has info for ${length} people
-        </p>
-        <p>
-        ${date}
-        </p>`)
+    Person.find({}).then(persons => {
+        const length = persons.length
+        const date = new Date()
+        const html = `<p>Phonebook has info for ${length} people</p><p>${date}</p>`
+        response.send(html)
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const person = persons.find(n => n.id === request.params.id)
-
-    if (!person) {
-        response.status(404).end()
-    } else {
-        response.json(person)
-    }
+    Person.findById(request.params.id).
+    then(person => {
+        if (person) {
+            response.json(person)
+        } else {
+            response.status(404).end()
+        }
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const person = persons.find(n => n.id === id)
-
-    if (person) {
-        persons = persons.filter(n => n.id !== id)
-        response.status(204).end()
-    } else {
-        response.status(404).end()
-    }
+    Person.deleteOne({
+            _id: request.params.id
+        })
+        .then(result => {
+            console.log(result)
+        })
+        .catch(err => {
+            console.error('person not deleted', err)
+        })
 })
 
 app.post('/api/persons', (request, response) => {
-    const id = Math.floor(Math.random() * 100000000);
-
     const body = request.body
+    console.log(body, 'this is body')
 
     if (!body.name) {
         return response.status(400).json({
@@ -86,26 +89,18 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const dupe = persons.find(n => n.name === body.name)
 
-    if (dupe) {
-        return response.status(400).json({
-            error: 'name must be unique'
-        })
-    }
-
-    const person = {
-        id: id,
+    const person = new Person({
         name: body.name,
-        number: body.number
-    }
+        number: body.number,
+    })
 
-    persons = persons.concat(person)
-
-    response.json(person)
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
