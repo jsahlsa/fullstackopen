@@ -14,9 +14,26 @@ mongoose.connect(url, {
         console.error('error connecting to MongoDB', error.message)
     })
 
+const numberValidator = val => {
+    const pattern = /^\d{2,3}-\d+$/;
+    return pattern.test(val)
+}
+
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+    name: {
+        type: String,
+        minLength: 3,
+        required: true
+    },
+    number: {
+        type: String,
+        minLength: 8,
+        required: true,
+        validate: {
+            validator: numberValidator,
+            message: props => `${props.value} is not a valid number`
+        }
+    },
 })
 
 personSchema.set('toJSON', {

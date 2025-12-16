@@ -60,9 +60,12 @@ function App() {
                         }, 3000)
                     })
                     .catch(err => {
-                        console.error(`An error occurred: ${err}`)
-                        setSuccess(`${newName} has been romoved from the server`)
+                        setSuccess(err.response.data.error)
                         setMessageType('error')
+                        console.error(`An error occurred: ${err}`)
+                        setTimeout(() => {
+                            setSuccess(null)
+                        }, 3000)
                     })
             }
         } else {
@@ -79,7 +82,12 @@ function App() {
                     }, 3000)
                 })
                 .catch(err => {
+                    setSuccess(err.response.data.error)
+                    setMessageType('error')
                     console.error(`An error occurred: ${err}`)
+                    setTimeout(() => {
+                        setSuccess(null)
+                    }, 3000)
                 })
         }
     }

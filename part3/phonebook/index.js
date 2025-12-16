@@ -58,20 +58,6 @@ app.post('/api/persons', (request, response, next) => {
     const body = request.body
     console.log(body, 'this is body')
 
-    if (!body.name) {
-        return response.status(400).json({
-            error: 'name must be given'
-        })
-    }
-
-    if (!body.number) {
-        return response.status(400).json({
-            error: 'number must be given'
-        })
-    }
-
-    console.log(body.name)
-
     const person = new Person({
         name: body.name,
         number: body.number,
@@ -91,9 +77,6 @@ app.put('/api/persons/:id', (request, response, next) => {
 
     Person.findById(request.params.id)
         .then(person => {
-            if (!person) {
-                return response.status(404).end()
-            }
 
             person.name = name
             person.number = number
@@ -120,6 +103,10 @@ const errorHandler = (error, request, response, next) => {
     if (error.name === 'CastError') {
         return response.status(400).send({
             error: 'malformed id'
+        })
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({
+            error: error.message
         })
     }
 
