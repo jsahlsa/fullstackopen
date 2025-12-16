@@ -53,20 +53,24 @@ app.get('/info', (request, response) => {
 app.get('/api/persons/:id', (request, response) => {
     Person.findById(request.params.id).
     then(person => {
-        if (person) {
-            response.json(person)
-        } else {
-            response.status(404).end()
-        }
-    })
+            if (person) {
+                response.json(person)
+            } else {
+                response.status(404).end()
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            response.status(400).send({
+                error: 'malformatted id'
+            })
+        })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    Person.deleteOne({
-            _id: request.params.id
-        })
+    Person.findByIdAndDelete(request.params.id)
         .then(result => {
-            console.log(result)
+            response.status(204).end()
         })
         .catch(err => {
             console.error('person not deleted', err)
