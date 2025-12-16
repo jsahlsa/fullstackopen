@@ -13,27 +13,6 @@ app.use(express.static('dist'))
 app.use(express.json())
 app.use(morgan(':method :url :res[content-length] - :response-time ms :body'))
 
-let persons = [{
-        "id": "1",
-        "name": "Arto Hellas",
-        "number": "040-123456"
-    },
-    {
-        "id": "2",
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523"
-    },
-    {
-        "id": "3",
-        "name": "Dan Abramov",
-        "number": "12-43-234345"
-    },
-    {
-        "id": "4",
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122"
-    }
-]
 
 app.get('/api/persons', (request, response, next) => {
     Person.find({}).then(persons => {
@@ -91,6 +70,7 @@ app.post('/api/persons', (request, response, next) => {
         })
     }
 
+    console.log(body.name)
 
     const person = new Person({
         name: body.name,
@@ -99,6 +79,29 @@ app.post('/api/persons', (request, response, next) => {
 
     person.save().then(savedPerson => {
             response.json(savedPerson)
+        })
+        .catch(error => next(error))
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+    const {
+        name,
+        number
+    } = request.body
+
+    Person.findById(request.params.id)
+        .then(person => {
+            if (!person) {
+                return response.status(404).end()
+            }
+
+            person.name = name
+            person.number = number
+
+            return person.save().then(updatedPerson => {
+                console.log(`${name} has been updated`)
+                response.json(updatedPerson)
+            })
         })
         .catch(error => next(error))
 })
