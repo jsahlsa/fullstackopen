@@ -2,10 +2,9 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const Person = require('./models/person')
-const person = require('./models/person')
 const app = express()
 
-morgan.token('body', (req, res) => {
+morgan.token('body', (req) => {
     return JSON.stringify(req.body)
 })
 
@@ -15,14 +14,16 @@ app.use(morgan(':method :url :res[content-length] - :response-time ms :body'))
 
 
 app.get('/api/persons', (request, response, next) => {
-    Person.find({}).then(persons => {
+    Person.find({})
+        .then(persons => {
             response.json(persons)
         })
         .catch(error => next(error))
 })
 
 app.get('/info', (request, response, next) => {
-    Person.find({}).then(persons => {
+    Person.find({})
+        .then(persons => {
             const length = persons.length
             const date = new Date()
             const html = `<p>Phonebook has info for ${length} people</p><p>${date}</p>`
@@ -32,8 +33,8 @@ app.get('/info', (request, response, next) => {
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
-    Person.findById(request.params.id).
-    then(person => {
+    Person.findById(request.params.id)
+        .then(person => {
             if (person) {
                 response.json(person)
             } else {
@@ -45,11 +46,11 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id)
-        .then(result => {
+        .then(() => {
             response.status(204).end()
         })
         .catch(error => {
-            console.error('person not deleted', err)
+            console.error('person not deleted', error)
             next(error)
         })
 })
@@ -63,7 +64,8 @@ app.post('/api/persons', (request, response, next) => {
         number: body.number,
     })
 
-    person.save().then(savedPerson => {
+    person.save()
+        .then(savedPerson => {
             response.json(savedPerson)
         })
         .catch(error => next(error))

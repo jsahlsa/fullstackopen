@@ -4,10 +4,11 @@ const url = process.env.MONGODB_URI
 
 mongoose.set('strictQuery', false)
 
-mongoose.connect(url, {
+mongoose
+    .connect(url, {
         family: 4
     })
-    .then(result => {
+    .then(() => {
         console.log('connected to MongoDB')
     })
     .catch(error => {
@@ -15,7 +16,7 @@ mongoose.connect(url, {
     })
 
 const numberValidator = val => {
-    const pattern = /^\d{2,3}-\d+$/;
+    const pattern = /^\d{2,3}-\d+$/
     return pattern.test(val)
 }
 
