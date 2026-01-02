@@ -63,6 +63,12 @@ test('a valid blog can be added', async () => {
     assert(titles.includes('Programming principles for self taught front-end developers'))
 })
 
+test('id comes back as id and not _id', async () => {
+    const blogs = await helper.blogsInDb()
+    const keys = Object.keys(blogs[0])
+    assert(keys.includes('id'))
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
