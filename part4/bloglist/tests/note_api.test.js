@@ -86,6 +86,30 @@ test('post without likes defaults to 0', async () => {
     assert.strictEqual(blogsAtEnd[blogsAtEnd.length - 1].likes, 0)
 })
 
+test('blog without title is not added', async () => {
+    const newBlog = {
+        "author": "Kilian Valkhof",
+        "url": "https://piccalil.li/blog/programming-principles-for-self-taught-front-end-developers/"
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+})
+
+test('blog without url is not added', async () => {
+    const newBlog = {
+        "title": "Programming principles for self taught front-end developers",
+        "author": "Kilian Valkhof",
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
