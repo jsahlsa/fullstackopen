@@ -69,6 +69,23 @@ test('id comes back as id and not _id', async () => {
     assert(keys.includes('id'))
 })
 
+test('post without likes defaults to 0', async () => {
+    const newBlog = {
+        "title": "Programming principles for self taught front-end developers",
+        "author": "Kilian Valkhof",
+        "url": "https://piccalil.li/blog/programming-principles-for-self-taught-front-end-developers/",
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd[blogsAtEnd.length - 1].likes, 0)
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
