@@ -191,6 +191,44 @@ describe('when there is initially one user in db', () => {
 
         assert.strictEqual(usersAtEnd.length, usersAtStart.length)
     })
+
+    test('check username for appropriate lenth', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'jo',
+            name: 'jo jo',
+            password: 'hohoho',
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDb()
+        assert.strictEqual(usersAtStart.length, usersAtEnd.length)
+    })
+
+    test('check password for appropriate lenth', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'joey',
+            name: 'jo jo',
+            password: 'ho',
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDb()
+        assert.strictEqual(usersAtStart.length, usersAtEnd.length)
+    })
 })
 
 after(async () => {
