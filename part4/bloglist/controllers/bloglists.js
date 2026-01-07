@@ -3,15 +3,8 @@ const jwt = require('jsonwebtoken')
 const BlogList = require('../models/bloglist')
 const User = require('../models/user')
 
-const getTokenFrom = request => {
-    const authorization = request.get('authorization')
-    if (authorization && authorization.startsWith('Bearer ')) {
-        return authorization.replace('Bearer ', '')
-    }
-    return null
-}
-
 blogListRouter.get('/', async (request, response, next) => {
+    console.log('here')
     const blogs = await BlogList.find({}).populate('user', {
         username: 1,
         name: 1
@@ -21,7 +14,7 @@ blogListRouter.get('/', async (request, response, next) => {
 
 blogListRouter.post('/', async (request, response, next) => {
     const body = request.body
-    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if (!decodedToken.id) {
         return response.status(401).json({
             error: 'token invalid'
@@ -52,6 +45,14 @@ blogListRouter.post('/', async (request, response, next) => {
 })
 
 blogListRouter.delete('/:id', async (request, response, next) => {
+    const blog = await BlogList.findById(request.params.id)
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+
+    if (!(blog.user.toString() === decodedToken.id)) {
+        return response.status(401).json({
+            error: 'Only blog creator can delete a blog'
+        })
+    }
     await BlogList.findByIdAndDelete(request.params.id)
     response.status(204).end()
 })
