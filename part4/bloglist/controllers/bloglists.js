@@ -14,14 +14,15 @@ blogListRouter.get('/', async (request, response, next) => {
 
 blogListRouter.post('/', async (request, response, next) => {
     const body = request.body
+    console.log(request.token, 'token', request.user, 'user')
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if (!decodedToken.id) {
         return response.status(401).json({
-            error: 'token invalid'
+            error: 'token invalid derp'
         })
     }
 
-    const user = await User.findById(decodedToken.id)
+    const user = request.user
 
     if (!user) {
         return response.status(400).json({
@@ -48,7 +49,7 @@ blogListRouter.delete('/:id', async (request, response, next) => {
     const blog = await BlogList.findById(request.params.id)
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
-    if (!(blog.user.toString() === decodedToken.id)) {
+    if (!(request.user._id.toString() === decodedToken.id)) {
         return response.status(401).json({
             error: 'Only blog creator can delete a blog'
         })
