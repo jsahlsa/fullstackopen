@@ -48,8 +48,11 @@ test('a valid blog can be added', async () => {
         "likes": 11,
     }
 
+    const token = await helper.getToken()
+
     await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -74,8 +77,11 @@ test('post without likes defaults to 0', async () => {
         "url": "https://piccalil.li/blog/programming-principles-for-self-taught-front-end-developers/",
     }
 
+    const token = await helper.getToken()
+
     await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -90,8 +96,11 @@ test('blog without title is not added', async () => {
         "url": "https://piccalil.li/blog/programming-principles-for-self-taught-front-end-developers/"
     }
 
+    const token = await helper.getToken()
+
     await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
 })
@@ -102,8 +111,11 @@ test('blog without url is not added', async () => {
         "author": "Kilian Valkhof",
     }
 
+    const token = await helper.getToken()
+
     await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
 })
@@ -112,8 +124,11 @@ test('a blog can be deleted', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToDelete = blogsAtStart[0]
 
+    const token = await helper.getToken()
+
     await api
         .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect(204)
 
     const notesAtEnd = await helper.blogsInDb()
