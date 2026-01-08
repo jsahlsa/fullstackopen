@@ -13,18 +13,32 @@ function App() {
         blogService.getAll().then(blogs => setBlogs(blogs))
     }, [])
 
+    useEffect(() => {
+        const loggedInUser = window.localStorage.getItem('loggedInUser')
+        if (loggedInUser) {
+            const user = JSON.parse(loggedInUser)
+            setUser(user)
+        }
+    }, [])
+
     const handleLogin = async e => {
         e.preventDefault()
 
         try {
             const user = await loginService.login({ username, password })
             setUser(user)
+            window.localStorage.setItem('loggedInUser', JSON.stringify(user))
             setUsername('')
             setPassword('')
             console.log(user)
         } catch {
             console.error('could not get user')
         }
+    }
+
+    const handleLogout = () => {
+        window.localStorage.clear()
+        setUser(null)
     }
 
     const loginForm = () => (
@@ -61,7 +75,7 @@ function App() {
     return (
         <>
             {!user && loginForm()}
-            {user && <Blogs blogs={blogs} user={user} />}
+            {user && <Blogs blogs={blogs} user={user} handleLogout={handleLogout} />}
         </>
     )
 }
