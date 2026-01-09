@@ -1,0 +1,18 @@
+.success,
+.error {
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 0.2rem;
+    padding: 0.5rem
+}
+
+.success {
+    background: palegreen;
+    border-color: seagreen;
+    color: seagreen;
+}
+
+.error {
+    background: lightpink;
+    border-color: crimson;
+}

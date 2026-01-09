@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blogs from './components/Blogs'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,6 +12,7 @@ function App() {
     const [title, setTitle] = useState('')
     const [author, setAuthor] = useState('')
     const [url, setUrl] = useState('')
+    const [message, setMessage] = useState(null)
 
     useEffect(() => {
         blogService.getAll().then(blogs => setBlogs(blogs))
@@ -36,8 +38,16 @@ function App() {
             setUsername('')
             setPassword('')
             console.log(user)
+            setMessage(['success', `${user.name} was logged in`])
+            setTimeout(() => {
+                setMessage(null)
+            }, 3000)
         } catch {
             console.error('could not get user')
+            setMessage(['error', 'wrong username or password'])
+            setTimeout(() => {
+                setMessage(null)
+            }, 3000)
         }
     }
 
@@ -55,7 +65,16 @@ function App() {
             url: url
         }
 
-        blogService.create(newBlog)
+        try {
+            blogService.create(newBlog)
+            setMessage(['success', `${title} added to blogs`])
+            setTimeout(() => {
+                setMessage(null)
+            }, 3000)
+        } catch (error) {
+            console.error(error)
+            setMessage(['error', `error adding ${title} to blogs`])
+        }
     }
 
     const loginForm = () => (
@@ -91,6 +110,7 @@ function App() {
 
     return (
         <>
+            <Notification message={message} />
             {!user && loginForm()}
             {user && <Blogs blogs={blogs} user={user} handleLogout={handleLogout} handleBlogAdd={handleBlogAdd} title={title} setTitle={setTitle} author={author} setAuthor={setAuthor} url={url} setUrl={setUrl} />}
         </>
