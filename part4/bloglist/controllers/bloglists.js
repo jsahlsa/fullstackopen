@@ -31,7 +31,7 @@ blogListRouter.post('/', async (request, response, next) => {
 
     const blog = new BlogList({
         title: body.title,
-        author: user.name,
+        author: body.author,
         url: body.url,
         likes: body.likes || 0,
         user: user._id
