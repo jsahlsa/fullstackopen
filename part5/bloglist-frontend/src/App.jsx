@@ -69,6 +69,9 @@ function App() {
         } catch (error) {
             console.error(error)
             setMessage(['error', `error adding ${newBlog.title} to blogs`])
+            setTimeout(() => {
+                setMessage(null)
+            }, 3000)
         }
     }
 
