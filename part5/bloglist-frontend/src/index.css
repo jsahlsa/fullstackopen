@@ -3,7 +3,8 @@
     border-width: 2px;
     border-style: solid;
     border-radius: 0.2rem;
-    padding: 0.5rem
+    padding: 0.5rem;
+    position: fixed;
 }
 
 .success {

@@ -38,9 +38,22 @@ const like = async (likeBlog, id) => {
     return response.data
 }
 
+const deleteBlog = async (id) => {
+    console.log('making a delete request')
+    const config = {
+        headers: {
+            Authorization: token
+        }
+    }
+
+    const response = await axios.delete(`${baseUrl}/${id}`, config)
+    return response.data
+}
+
 export default {
     getAll,
     create,
     like,
+    deleteBlog,
     setToken
 }

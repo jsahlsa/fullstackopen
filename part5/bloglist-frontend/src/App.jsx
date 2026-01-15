@@ -84,6 +84,28 @@ function App() {
         }
     }
 
+    const deleteOne = (id) => {
+        const blogToDelete = blogs.filter(blog => blog.id === id)
+        const filteredBlogs = blogs.filter(blog => blog.id !== blogToDelete[0].id)
+        if (window.confirm(`remove ${blogToDelete[0].title} by ${blogToDelete[0].author}`)) {
+            try {
+                console.log('delete in app component', id)
+                setMessage(['success', `${blogToDelete[0].title} by ${blogToDelete[0].author} has been deleted`])
+                blogService.deleteBlog(id)
+                setBlogs(filteredBlogs)
+                setTimeout(() => {
+                    setMessage(null)
+                }, 3000)
+            } catch (error) {
+                console.error('error deleting blog', error)
+                setMessage(['error', `could not delete ${blogToDelete[0].title}`])
+                setTimeout(() => {
+                    setMessage(null)
+                }, 3000)
+            }
+        }
+    }
+
     return (
         <>
             <Notification message={message} />
@@ -116,6 +138,7 @@ function App() {
                 user={user}
                 handleLogout={handleLogout}
                 handleLike={handleLike}
+                deleteOne={deleteOne}
             />}
         </>
     )

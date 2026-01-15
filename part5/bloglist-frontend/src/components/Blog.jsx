@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Blog = ({ blog, handleLike }) => {
+const Blog = ({ blog, user, handleLike, deleteOne }) => {
     const [visible, setVisible] = useState(false)
     const [likes, setLikes] = useState(blog.likes)
 
@@ -12,7 +12,6 @@ const Blog = ({ blog, handleLike }) => {
 
         const newLikes = likes + 1
         setLikes(newLikes)
-        console.log(blog.id, 'blog in blog')
 
         handleLike({
             title: blog.title,
@@ -20,6 +19,11 @@ const Blog = ({ blog, handleLike }) => {
             url: blog.url,
             likes: newLikes,
         }, blog.id)
+    }
+
+    const handleDelete = () => {
+        console.log('blog in delete', blog)
+        deleteOne(blog.id)
     }
 
     const blogStyle = {
@@ -38,6 +42,7 @@ const Blog = ({ blog, handleLike }) => {
                 <p><a href={blog.url}>{blog.url}</a></p>
                 <p>likes {likes}<button onClick={handleAddLike} style={{ marginLeft: 7 }}>like</button></p>
                 <p>{blog?.user?.name}</p>
+                {(blog?.user?.id && (blog?.user?.id === user)) && <button onClick={handleDelete}>remove</button> }
             </>
             }
         </li>
