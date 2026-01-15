@@ -75,6 +75,15 @@ function App() {
         }
     }
 
+    const handleLike = (newBlog, id) => {
+        try {
+            console.log('in App component', newBlog)
+            blogService.like(newBlog, id)
+        } catch (error) {
+            console.error(error, 'error liking blog')
+        }
+    }
+
     return (
         <>
             <Notification message={message} />
@@ -106,6 +115,7 @@ function App() {
                 blogs={blogs}
                 user={user}
                 handleLogout={handleLogout}
+                handleLike={handleLike}
             />}
         </>
     )

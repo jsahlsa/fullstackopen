@@ -58,6 +58,7 @@ blogListRouter.delete('/:id', async (request, response, next) => {
 })
 
 blogListRouter.put('/:id', async (request, response, next) => {
+    console.log('start of put request')
     const {
         title,
         author,
@@ -66,12 +67,17 @@ blogListRouter.put('/:id', async (request, response, next) => {
     } = request.body
 
     const blog = await BlogList.findById(request.params.id)
+    console.log(request.body, 'request body')
+    const user = request.user
+
 
     blog.likes = likes
     blog.title = title
     blog.author = author
     blog.url = url
+    blog.user = user._id
 
+    console.log('blog after create', blog)
     const savedBlog = await blog.save()
     response.status(200).json(savedBlog)
 })

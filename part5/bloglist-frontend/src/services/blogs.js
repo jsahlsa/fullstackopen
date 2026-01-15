@@ -26,8 +26,21 @@ const create = async newBlog => {
     return response.data
 }
 
+const like = async (likeBlog, id) => {
+    console.log('making a put request')
+    const config = {
+        headers: {
+            Authorization: token
+        }
+    }
+
+    const response = await axios.put(`${baseUrl}/${id}`, likeBlog, config)
+    return response.data
+}
+
 export default {
     getAll,
     create,
+    like,
     setToken
 }
