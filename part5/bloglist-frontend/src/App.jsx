@@ -8,140 +8,140 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 
 function App() {
-    const [blogs, setBlogs] = useState([])
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [user, setUser] = useState(null)
-    const [message, setMessage] = useState(null)
+  const [blogs, setBlogs] = useState([])
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [user, setUser] = useState(null)
+  const [message, setMessage] = useState(null)
 
-    const blogFormRef = useRef()
+  const blogFormRef = useRef()
 
-    useEffect(() => {
-        blogService.getAll().then(blogs => setBlogs(blogs))
-    }, [])
+  useEffect(() => {
+    blogService.getAll().then(blogs => setBlogs(blogs))
+  }, [])
 
-    useEffect(() => {
-        const loggedInUser = window.localStorage.getItem('loggedInUser')
-        if (loggedInUser) {
-            const user = JSON.parse(loggedInUser)
-            setUser(user)
-            blogService.setToken(user.token)
-        }
-    }, [])
-
-    const handleLogin = async e => {
-        e.preventDefault()
-
-        try {
-            const user = await loginService.login({ username, password })
-            blogService.setToken(user.token)
-            setUser(user)
-            window.localStorage.setItem('loggedInUser', JSON.stringify(user))
-            setUsername('')
-            setPassword('')
-            console.log(user)
-            setMessage(['success', `${user.name} was logged in`])
-            setTimeout(() => {
-                setMessage(null)
-            }, 3000)
-        } catch {
-            console.error('could not get user')
-            setMessage(['error', 'wrong username or password'])
-            setTimeout(() => {
-                setMessage(null)
-            }, 3000)
-        }
+  useEffect(() => {
+    const loggedInUser = window.localStorage.getItem('loggedInUser')
+    if (loggedInUser) {
+      const user = JSON.parse(loggedInUser)
+      setUser(user => user)
+      blogService.setToken(user.token)
     }
+  }, [])
 
-    const handleLogout = () => {
-        window.localStorage.clear()
-        setUser(null)
+  const handleLogin = async e => {
+    e.preventDefault()
+
+    try {
+      const user = await loginService.login({ username, password })
+      blogService.setToken(user.token)
+      setUser(user)
+      window.localStorage.setItem('loggedInUser', JSON.stringify(user))
+      setUsername('')
+      setPassword('')
+      console.log(user)
+      setMessage(['success', `${user.name} was logged in`])
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
+    } catch {
+      console.error('could not get user')
+      setMessage(['error', 'wrong username or password'])
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
     }
+  }
 
-    const handleBlogAdd = (newBlog) => {
-        try {
-            blogFormRef.current.toggleVisibility()
-            blogService.create(newBlog)
-            setMessage(['success', `${newBlog.title} added to blogs`])
-            setTimeout(() => {
-                setMessage(null)
-            }, 3000)
-        } catch (error) {
-            console.error(error)
-            setMessage(['error', `error adding ${newBlog.title} to blogs`])
-            setTimeout(() => {
-                setMessage(null)
-            }, 3000)
-        }
+  const handleLogout = () => {
+    window.localStorage.clear()
+    setUser(null)
+  }
+
+  const handleBlogAdd = (newBlog) => {
+    try {
+      blogFormRef.current.toggleVisibility()
+      blogService.create(newBlog)
+      setMessage(['success', `${newBlog.title} added to blogs`])
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
+    } catch (error) {
+      console.error(error)
+      setMessage(['error', `error adding ${newBlog.title} to blogs`])
+      setTimeout(() => {
+        setMessage(null)
+      }, 3000)
     }
+  }
 
-    const handleLike = (newBlog, id) => {
-        try {
-            console.log('in App component', newBlog)
-            blogService.like(newBlog, id)
-        } catch (error) {
-            console.error(error, 'error liking blog')
-        }
+  const handleLike = (newBlog, id) => {
+    try {
+      console.log('in App component', newBlog)
+      blogService.like(newBlog, id)
+    } catch (error) {
+      console.error(error, 'error liking blog')
     }
+  }
 
-    const deleteOne = (id) => {
-        const blogToDelete = blogs.filter(blog => blog.id === id)
-        const filteredBlogs = blogs.filter(blog => blog.id !== blogToDelete[0].id)
-        if (window.confirm(`remove ${blogToDelete[0].title} by ${blogToDelete[0].author}`)) {
-            try {
-                console.log('delete in app component', id)
-                setMessage(['success', `${blogToDelete[0].title} by ${blogToDelete[0].author} has been deleted`])
-                blogService.deleteBlog(id)
-                setBlogs(filteredBlogs)
-                setTimeout(() => {
-                    setMessage(null)
-                }, 3000)
-            } catch (error) {
-                console.error('error deleting blog', error)
-                setMessage(['error', `could not delete ${blogToDelete[0].title}`])
-                setTimeout(() => {
-                    setMessage(null)
-                }, 3000)
-            }
-        }
+  const deleteOne = (id) => {
+    const blogToDelete = blogs.filter(blog => blog.id === id)
+    const filteredBlogs = blogs.filter(blog => blog.id !== blogToDelete[0].id)
+    if (window.confirm(`remove ${blogToDelete[0].title} by ${blogToDelete[0].author}`)) {
+      try {
+        console.log('delete in app component', id)
+        setMessage(['success', `${blogToDelete[0].title} by ${blogToDelete[0].author} has been deleted`])
+        blogService.deleteBlog(id)
+        setBlogs(filteredBlogs)
+        setTimeout(() => {
+          setMessage(null)
+        }, 3000)
+      } catch (error) {
+        console.error('error deleting blog', error)
+        setMessage(['error', `could not delete ${blogToDelete[0].title}`])
+        setTimeout(() => {
+          setMessage(null)
+        }, 3000)
+      }
     }
+  }
 
-    return (
+  return (
+    <>
+      <Notification message={message} />
+      <h2>Blogs</h2>
+
+      {!user &&
+      <Togglable buttonLabel='login'>
+        <LoginForm
+          username={username}
+          setUsername={setUsername}
+          password={password}
+          setPassword={setPassword}
+          handleLogin={handleLogin}
+        />
+      </Togglable>}
+      {user &&
         <>
-            <Notification message={message} />
-            <h2>Blogs</h2>
+          <p>{user.name} is logged in</p>
 
-            {!user &&
-            <Togglable buttonLabel='login'>
-                <LoginForm
-                    username={username}
-                    setUsername={setUsername}
-                    password={password}
-                    setPassword={setPassword}
-                    handleLogin={handleLogin}
-                />
-            </Togglable>}
-            {user &&
-                <>
-                    <p>{user.name} is logged in</p>
+          <button onClick={handleLogout}>logout</button>
+        </>}
+      {user &&
+        <Togglable buttonLabel='create blog' ref={blogFormRef}>
+          <BlogForm handleBlogAdd={handleBlogAdd} />
 
-                    <button onClick={handleLogout}>logout</button>
-                </>}
-            {user &&
-                <Togglable buttonLabel='create blog' ref={blogFormRef}>
-                    <BlogForm handleBlogAdd={handleBlogAdd} />
+        </Togglable>}
 
-                </Togglable>}
-
-            {user && <Blogs
-                blogs={blogs}
-                user={user}
-                handleLogout={handleLogout}
-                handleLike={handleLike}
-                deleteOne={deleteOne}
-            />}
-        </>
-    )
+      {user && <Blogs
+        blogs={blogs}
+        user={user}
+        handleLogout={handleLogout}
+        handleLike={handleLike}
+        deleteOne={deleteOne}
+      />}
+    </>
+  )
 }
 
 export default App
